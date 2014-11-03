@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello World!</title>
+    <style>
+     * { margin: 0; padding: 0 }
+     .container { margin: 1em }
+     .progressbar { border: 1px black solid; height: 3em ; width: 100% }
+     .progressbar-complete { height: 100%; width: 0%; background-color: #006 }
+     h1 { font: 14pt Input Mono, Courier, mono; margin: 1em }
+    </style>
+  </head>
+  <body>
+    <h1 class="js-title"></h1>
+    <!-- .container>.progressbar>.progressbar-complete -->
+    <div class="container">
+      <div class="progressbar">
+        <div class="js-progress progressbar-complete"></div>
+      </div>
+    </div>
+    <script>
+     argv = require('nw.gui').App.argv;
+     interval_minutes = eval(argv.shift());
+     document.getElementsByClassName("js-title")[0].innerHTML = argv.reduce(function(res, cur){return res + " " + cur}, "")
+     start_ms = new Date().getTime();
+     interval_ms = interval_minutes*60*1000;
+
+     var updateProgressbar = function(){
+       var current_ms = new Date().getTime();
+       var current_progress = (current_ms - start_ms) / interval_ms;
+       document.getElementsByClassName("js-progress")[0].style.width = ("" + 100*current_progress + "%");
+       window.requestAnimationFrame(updateProgressbar);
+     }
+     window.requestAnimationFrame(updateProgressbar);
+     command = argv.shift();
+     require('child_process').execFile(command, argv);
+    </script>
+  </body>
+</html>
